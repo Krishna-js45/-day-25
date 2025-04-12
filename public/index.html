@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login to View Student Details</title>
+  <style>
+    body { font-family: Arial; margin: 40px; }
+    input { margin: 5px; padding: 5px; }
+    .hidden { display: none; }
+    .box { border: 1px solid #ccc; padding: 20px; width: 300px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h3>Login</h3>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+    <p id="error" style="color: red;"></p>
+  </div>
+
+  <div id="details" class="hidden">
+    <h3>Student Details</h3>
+    <p><strong>Name:</strong> <span id="name"></span></p>
+    <p><strong>Email:</strong> <span id="email"></span></p>
+    <p><strong>Roll Number:</strong> <span id="roll"></span></p>
+    <p><strong>Semester:</strong> <span id="sem"></span></p>
+  </div>
+
+  <script>
+    function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      })
+      .then(res => {
+        if (!res.ok) throw new Error("Invalid login");
+        return res.json();
+      })
+      .then(data => {
+        document.querySelector(".box").classList.add("hidden");
+        document.getElementById("details").classList.remove("hidden");
+        document.getElementById("name").textContent = data.user.name;
+        document.getElementById("email").textContent = data.user.email;
+        document.getElementById("roll").textContent = data.user.roll_number;
+        document.getElementById("sem").textContent = data.user.semester;
+      })
+      .catch(err => {
+        document.getElementById("error").textContent = "Login failed.";
+      });
+    }
+  </script>
+</body>
+</html>
+
+
